@@ -163,3 +163,86 @@ vector<int> prime_factorize_log(ll n)
 
     return prime_factors;
 }
+
+/*
+    Algorithm name : Longest increasing subsequence (LIS) - Dynamic Programming
+    
+    Usage : Finding the length of the longest subsequence of a given sequence such that all elements of the                 subsequence are sorted in increasing order.
+
+    Constraints : ~20 for the recursive solution, 1000 for DP solution
+
+    Constraint Variable used : Length of the original squence : n
+
+    Algorithm : 
+
+        Step 1 : `arr` is the sequence array. The `lis` routine returns the length of the longest increasing                  subsequence ending at index `i` such that `arr[i]` is the last element of the subsequence.
+                  To achieve this the `lis(i)` is obtained by recursively performing Step 2.
+
+        Step 2 : lis(i) = 1 + max( lis(j) ) where 0 < j < i and arr[j] < arr[i], or
+                 lis(i) = 1, if no such j exists.
+
+        Step 3 : The required answer would be max( lis(i) ) for all 0 < i < n.
+
+        ******* End of recursive solution. Step 4 for DP solution with memoization *******
+
+        Step 4 : By careful observation you can notice the problem has both optimal substructure and overlaping              subproblems property. Example, for lis(4) we are calculating lis(3) to lis(1), after that, for 
+                 lis(5) we again calculate lis(4) to lis(1). lis(3) to lis(1) are therefore getting calculated more than once. To prevent this we can use dynamic programming approach with memoization, reducing the complexity of solution from exponential to O(n^2).
+    
+    Complexity : Exponential for the recursive solution
+                 O( n^2 ) Using dynamic programming approach
+
+    IDEone Link :
+        1) Recursive solution : https://ideone.com/KQS0YR
+        2) DP Solution : https://ideone.com/Y6DaoB
+  
+    Note : 
+        1)  An even better solution with O( n log(n) ) complexity exists; will do that some other time.
+*/
+
+//Recursive solution
+
+ll lis_rec_ans;
+
+ll lis(ll arr[], int i)
+{
+    ll res, max = 1;
+    for (ll j = i-1; j >= 0; j--)
+    {
+        res = lis(arr, j);
+        if(arr[i] > arr[j] && res+1 > max)
+        	max = res+1;
+    }
+
+    if(lis_rec_ans < (max))
+    	lis_rec_ans = max;
+    	
+    return (max);
+}
+
+//DP Solution
+
+//Update this as per requirement
+#define LIS_MEMO_MAX 100
+
+int lis_memo[LIS_MEMO_MAX];
+ll lis_dp_ans;
+
+ll lis_dp(ll arr[], int i)
+{
+    if(lis_memo[i] != -1)
+        return lis_memo[i];
+    
+    ll res, max = 1;
+    for (ll j = i-1; j >= 0; j--)
+    {
+        res = lis_dp(arr, j);
+        if(arr[i] > arr[j] && res+1 > max)
+        	max = res+1;
+    }
+    lis_memo[i] = max;
+
+    if(lis_dp_ans < (max))
+    	lis_dp_ans = max;
+    	
+    return (max);
+}
